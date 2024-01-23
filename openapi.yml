@@ -1,0 +1,292 @@
+openapi: "3.1.0"
+info:
+  version: 1.0.0
+  title: ncloud
+servers:
+  - url: https://globaldns.apigw.gov-ntruss.com/dns/v1
+    description: ncloud server
+paths:
+  /ncpdns/record/apply/{domainId}:
+    put:
+      summary: 도메인 설정
+      operationId: applyRecordChange
+      parameters:
+        - in: path
+          name: domainId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 정상 응답
+  /ncpdns/domain:
+    post:
+      summary: 도메인 생성
+      operationId: postDomain
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                comments:
+                  type: string
+                name:
+                  type: string
+      responses:
+        '200':
+          description: 정상 응답
+    get:
+      summary: 도메인 조회
+      operationId: getDomain
+      parameters:
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: size
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: domainName
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 정상응답
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int64
+                        name:
+                          type: string
+                        completeYn:
+                          type: boolean
+                        status:
+                          type: string
+  /ncpdns/record/{domainId}:
+    get:
+      summary: 레코드 조회
+      operationId: getRecord
+      parameters:
+        - in: path
+          name: domainId
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: size
+          required: true
+          schema:
+            type: integer
+            format: int32
+        - in: query
+          name: recordType
+          required: false
+          schema:
+            type: string
+        - in: query
+          name: searchContent
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: 정상응답
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        host:
+                          type: string
+                        type:
+                          type: string
+                        content:
+                          type: string
+                        ttl:
+                          type: integer
+                          format: int64
+                        aliasId: 
+                          type: integer
+                          format: int64
+                        id: 
+                          type: integer
+                          format: int64
+                        domainName:
+                          type: string
+                        createdDate:
+                          type: integer
+                          format: int64
+                        modifiedDate: 
+                          type: integer
+                          format: int64
+                        defaultYn: 
+                          type: boolean
+                        applyYn:
+                          type: boolean
+                        aliasYn:
+                          type: boolean
+                        lbPlatform:
+                          type: string
+                        lbYn:
+                          type: boolean
+                        delYn:
+                          type: boolean
+    post:
+      summary: 레코드 생성
+      operationId: createRecord
+      parameters:
+        - in: path
+          name: domainId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  host:
+                    type: string
+                  type:
+                    type: string
+                  content:
+                    type: string
+                  ttl:
+                    type: integer
+                    format: int64
+                  aliasId:
+                    type: integer
+                    format: int64
+                  lbId:
+                    type: integer
+                    format: int64
+                required:
+                  - host
+                  - type
+                  - content
+                  - ttl
+      responses:
+        '200':
+          description: 정상 응답
+    put:
+      summary: 레코드 수정
+      operationId: updateRecord
+      parameters:
+        - in: path
+          name: domainId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    format: int64
+                  host:
+                    type: string
+                  type:
+                    type: string
+                  content:
+                    type: string
+                  ttl:
+                    type: integer
+                    format: int64
+                  aliasId:
+                    type: integer
+                    format: int64
+                  lbId:
+                    type: integer
+                    format: int64
+                required:
+                  - id
+                  - host
+                  - type
+                  - content
+                  - ttl
+      responses:
+        '200':
+          description: 정상 응답
+    delete:
+      summary: 레코드 삭제
+      operationId: deleteRecord
+      parameters:
+        - in: path
+          name: domainId
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: integer
+                format: int64
+      responses:
+        '200':
+          description: 정상 응답
+components:
+  parameters:
+    timestampHeader:
+      in: header
+      name: 'x-ncp-apigw-timestamp'
+      schema:
+        type: string
+      required: true
+    accessKeyHeader:
+      in: header
+      name: 'x-ncp-iam-access-key'
+      schema:
+        type: string
+      required: true
+    signatureHeader:
+      in: header
+      name: 'x-ncp-apigw-signature-v2'
+      schema:
+        type: string
+      required: true
